@@ -1,11 +1,11 @@
 package main
 
 import (
+	"bytes"
 	crand "crypto/rand"
 	"fmt"
 	"io"
 	"math/rand"
-	"strings"
 )
 
 func NewRand() *rand.Rand {
@@ -33,9 +33,9 @@ func NewPassword(length int) string {
 			char := alphabet[r.Intn(len(alphabet))]
 			pass = append(pass, char)
 		}
-		if strings.ContainsAny(string(pass), upper) &&
-			strings.ContainsAny(string(pass), lower) &&
-			strings.ContainsAny(string(pass), digit) {
+		if bytes.ContainsAny(pass, upper) &&
+			bytes.ContainsAny(pass, lower) &&
+			bytes.ContainsAny(pass, digit) {
 			return string(pass)
 		}
 		pass = pass[:0]
