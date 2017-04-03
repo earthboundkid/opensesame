@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"strings"
 )
 
 func NewRand() *rand.Rand {
@@ -19,14 +20,26 @@ func NewRand() *rand.Rand {
 }
 
 func NewPassword(length int) string {
-	const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+	const (
+		upper    = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		lower    = "abcdefghijklmnopqrstuvwxyz"
+		digit    = "0123456789"
+		alphabet = upper + lower + digit
+	)
 	pass := make([]byte, 0, length)
 	r := NewRand()
-	for i := 0; i < cap(pass); i++ {
-		char := alphabet[r.Intn(len(alphabet))]
-		pass = append(pass, char)
+	for {
+		for i := 0; i < cap(pass); i++ {
+			char := alphabet[r.Intn(len(alphabet))]
+			pass = append(pass, char)
+		}
+		if strings.ContainsAny(string(pass), upper) &&
+			strings.ContainsAny(string(pass), lower) &&
+			strings.ContainsAny(string(pass), digit) {
+			return string(pass)
+		}
+		pass = pass[:0]
 	}
-	return string(pass)
 }
 
 func main() {
