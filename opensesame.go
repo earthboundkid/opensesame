@@ -3,9 +3,12 @@ package main
 import (
 	"bytes"
 	crand "crypto/rand"
+	"flag"
 	"fmt"
 	"io"
 	"math/rand"
+	"os"
+	"strings"
 )
 
 func NewRand() *rand.Rand {
@@ -19,29 +22,49 @@ func NewRand() *rand.Rand {
 	return rand.New(rand.NewSource(seed))
 }
 
-func NewPassword(length int) string {
-	const (
-		upper    = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		lower    = "abcdefghijklmnopqrstuvwxyz"
-		digit    = "0123456789"
-		alphabet = upper + lower + digit
-	)
+func NewPassword(length int, alphabets ...string) string {
+	alphabet := strings.Join(alphabets, "")
 	pass := make([]byte, 0, length)
 	r := NewRand()
+
 	for {
 		for i := 0; i < cap(pass); i++ {
 			char := alphabet[r.Intn(len(alphabet))]
 			pass = append(pass, char)
 		}
-		if bytes.ContainsAny(pass, upper) &&
-			bytes.ContainsAny(pass, lower) &&
-			bytes.ContainsAny(pass, digit) {
+		done := true
+		for _, alphabet := range alphabets {
+			if !bytes.ContainsAny(pass, alphabet) {
+				done = false
+				pass = pass[:0]
+				break
+			}
+		}
+		if done {
 			return string(pass)
 		}
-		pass = pass[:0]
 	}
 }
 
 func main() {
-	fmt.Println(NewPassword(8))
+	alpha := "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789"
+	length := flag.Int("length", 8, "length of password to generate")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, `Usage of %s [opts] [alphabet]:
+
+	Alphabet is a space separated list of character classes to use.
+	At least one character in each class will be output.
+	Default alphabet is one upper, one lower, one digit (%q).
+
+`, os.Args[0], alpha)
+		flag.PrintDefaults()
+	}
+	flag.Parse()
+
+	if flag.Arg(0) != "" {
+		alpha = flag.Arg(0)
+	}
+	alphas := strings.Split(alpha, " ")
+
+	fmt.Println(NewPassword(*length, alphas...))
 }
