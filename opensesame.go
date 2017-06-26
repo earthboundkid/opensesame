@@ -56,8 +56,8 @@ loop:
 		pass = append(pass, char)
 	}
 
-	for _, alphabet := range alphabets {
-		if !bytes.ContainsAny(pass, alphabet) {
+	for _, subalpha := range alphabets {
+		if !bytes.ContainsAny(pass, subalpha) {
 			pass = pass[:0]
 			goto loop
 		}
@@ -67,7 +67,13 @@ loop:
 }
 
 func main() {
-	alpha := "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789"
+	const (
+		upper           = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		lower           = "abcdefghijklmnopqrstuvwxyz"
+		digit           = "0123456789"
+		defaultAlphabet = "upper lower digit"
+	)
+
 	length := flag.Int("length", 8, "length of password to generate")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage of %s [opts] [alphabet]:
@@ -76,16 +82,26 @@ func main() {
 
 	Alphabet is a space separated list of character classes to use.
 	At least one character in each class will be output.
-	Default alphabet is one upper, one lower, one digit (%q).
+	Character classes are either literal sets (like "abc" and "123") or the
+	special names "upper", "lower", "digit", and "default".
 
-`, os.Args[0], alpha)
+	Default alphabet is %q.
+
+`, os.Args[0], defaultAlphabet)
 		flag.PrintDefaults()
 	}
 	flag.Parse()
 
-	if flag.Arg(0) != "" {
-		alpha = flag.Arg(0)
+	alpha := flag.Arg(0)
+	if alpha == "" {
+		alpha = defaultAlphabet
 	}
+	alpha = strings.Replace(alpha, "default", defaultAlphabet, -1)
+	alpha = strings.Replace(alpha, "upper", upper, -1)
+	alpha = strings.Replace(alpha, "lower", lower, -1)
+	alpha = strings.Replace(alpha, "digits", digit, -1)
+	alpha = strings.Replace(alpha, "digit", digit, -1)
+
 	alphas := strings.Split(alpha, " ")
 
 	if pass, err := NewPassword(*length, alphas...); err == nil {
