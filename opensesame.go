@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	crand "crypto/rand"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -22,28 +23,47 @@ func NewRand() *rand.Rand {
 	return rand.New(rand.NewSource(seed))
 }
 
-func NewPassword(length int, alphabets ...string) string {
+var (
+	ErrPassLength      = errors.New("Length of password must be greater than 1")
+	ErrPassAlphaLength = errors.New("Length of password must be greater than or " +
+		"equal to number of required characters")
+	ErrAlphaLength = errors.New("Alphabet must not be empty")
+)
+
+func NewPassword(length int, alphabets ...string) (string, error) {
 	alphabet := strings.Join(alphabets, "")
+
+	if length < 1 {
+
+		return "", ErrPassLength
+	}
+
+	if length < len(alphabets) {
+		return "", ErrPassAlphaLength
+	}
+
+	if alphabet == "" {
+		return "", ErrAlphaLength
+	}
+
 	pass := make([]byte, 0, length)
 	r := NewRand()
 
-	for {
-		for i := 0; i < cap(pass); i++ {
-			char := alphabet[r.Intn(len(alphabet))]
-			pass = append(pass, char)
-		}
-		done := true
-		for _, alphabet := range alphabets {
-			if !bytes.ContainsAny(pass, alphabet) {
-				done = false
-				pass = pass[:0]
-				break
-			}
-		}
-		if done {
-			return string(pass)
+	// Loop until the generated password has required characteristics
+loop:
+	for i := 0; i < cap(pass); i++ {
+		char := alphabet[r.Intn(len(alphabet))]
+		pass = append(pass, char)
+	}
+
+	for _, alphabet := range alphabets {
+		if !bytes.ContainsAny(pass, alphabet) {
+			pass = pass[:0]
+			goto loop
 		}
 	}
+
+	return string(pass), nil
 }
 
 func main() {
@@ -51,6 +71,8 @@ func main() {
 	length := flag.Int("length", 8, "length of password to generate")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage of %s [opts] [alphabet]:
+
+	Creates a password by randomly selecting characters from its alphabet.
 
 	Alphabet is a space separated list of character classes to use.
 	At least one character in each class will be output.
@@ -66,5 +88,10 @@ func main() {
 	}
 	alphas := strings.Split(alpha, " ")
 
-	fmt.Println(NewPassword(*length, alphas...))
+	if pass, err := NewPassword(*length, alphas...); err == nil {
+		fmt.Println(pass)
+	} else {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(2)
+	}
 }
