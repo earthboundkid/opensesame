@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 func NewRand() *rand.Rand {
@@ -23,11 +24,14 @@ func NewRand() *rand.Rand {
 	return rand.New(rand.NewSource(seed))
 }
 
+const deadline = 500 * time.Millisecond
+
 var (
 	ErrPassLength      = errors.New("Length of password must be greater than 1")
 	ErrPassAlphaLength = errors.New("Length of password must be greater than or " +
 		"equal to number of required characters")
 	ErrAlphaLength = errors.New("Alphabet must not be empty")
+	ErrTimeOut     = errors.New("Could not find a matching password in " + deadline.String())
 )
 
 func NewPassword(length int, alphabets ...string) (string, error) {
@@ -50,20 +54,29 @@ func NewPassword(length int, alphabets ...string) (string, error) {
 	r := NewRand()
 
 	// Loop until the generated password has required characteristics
-loop:
-	for i := 0; i < cap(pass); i++ {
-		char := alphabet[r.Intn(len(alphabet))]
-		pass = append(pass, char)
-	}
+	// or time runs out
+	start := time.Now()
+	for time.Since(start) < deadline {
 
-	for _, subalpha := range alphabets {
-		if !bytes.ContainsAny(pass, subalpha) {
-			pass = pass[:0]
-			goto loop
+		for i := 0; i < cap(pass); i++ {
+			char := alphabet[r.Intn(len(alphabet))]
+			pass = append(pass, char)
+		}
+
+		missingAlphabet := false
+		for _, subalpha := range alphabets {
+			if !bytes.ContainsAny(pass, subalpha) {
+				pass = pass[:0]
+				missingAlphabet = true
+				break
+			}
+		}
+
+		if !missingAlphabet {
+			return string(pass), nil
 		}
 	}
-
-	return string(pass), nil
+	return "", ErrTimeOut
 }
 
 func main() {
