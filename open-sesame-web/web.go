@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -36,7 +37,17 @@ func main() {
 			http.NotFound(w, r)
 			return
 		}
-		pass, err := pass.New(8, upper, lower, digit)
+		_ = r.ParseForm()
+		alphabets := r.Form["alpha"]
+		if len(alphabets) == 0 {
+			alphabets = []string{upper, lower, digit}
+		}
+		lengthStr := r.Form.Get("length")
+		length, _ := strconv.Atoi(lengthStr)
+		if length < 1 || length > 256 {
+			length = 8
+		}
+		pass, err := pass.New(length, alphabets...)
 		if err != nil {
 			log.Printf("Error %s %q %v", r.URL, r.UserAgent(), err)
 			http.Error(w, "Something went wrong", 500)
