@@ -33,3 +33,6 @@ Usage of opensesame [opts] [alphabet]:
 $ opensesame --length 4 '123 ABC xyz &%$'
 &Cx3
 ```
+
+## Web server
+A web server for random passwords is also included as `open-sesame-web`. [See it online](https://open-sesame-web.herokuapp.com).
