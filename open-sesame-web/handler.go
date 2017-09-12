@@ -74,6 +74,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		digit = "0123456789"
 	)
 
+	// Validate request
 	_ = r.ParseForm()
 	alphabets := r.Form["alpha"]
 	// Filter empty strings
@@ -94,12 +95,17 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	if length < 1 || length > 256 {
 		length = 8
 	}
+
+	// Get template values
 	pass, err := pass.New(length, alphabets...)
 	if err != nil {
 		log.Printf("Error %s %q %v", r.URL, r.UserAgent(), err)
 		http.Error(w, "Something went wrong", 500)
 		return
 	}
+
+	// Respond
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	err = tmpl.Execute(w, struct {
 		Length    int
 		Alphabets []string
