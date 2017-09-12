@@ -15,7 +15,7 @@ const html = `<html>
     </head>
     <body>
         <p>Your password:</p>
-        <h1>{{ .Password }}</h1>
+        <h1 id="password">{{ .Password }}</h1>
         <p>Create a new password:</p>
         <form action="" method="get">
             <fieldset id="alphabets">
@@ -59,6 +59,19 @@ document.addEventListener("DOMContentLoaded", () => {
   defaultAlphabets.forEach(createAlpha);
 
   addBtn.addEventListener("click", () => createAlpha(""));
+
+  let pwEl = document.getElementById("password");
+
+  pwEl.addEventListener("click", event => {
+    let range = document.createRange();
+    range.selectNodeContents(pwEl);
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    if (document.execCommand("copy")) {
+      alert("copied");
+    }
+  });
 });
         </script>
     </body>
