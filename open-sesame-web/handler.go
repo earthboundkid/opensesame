@@ -9,76 +9,7 @@ import (
 	"github.com/carlmjohnson/opensesame/pass"
 )
 
-const html = `<html>
-    <head>
-        <title>Open Sesame Web</title>
-    </head>
-    <body>
-        <p>Your password:</p>
-        <h1 id="password">{{ .Password }}</h1>
-        <p>Create a new password:</p>
-        <form action="" method="get">
-            <fieldset id="alphabets">
-            <button id="add-button" type="button">+</button>
-            </fieldset>
-
-            <label for="length">Length</label>
-            <input
-                type="number"
-                id="length"
-                name="length"
-                autcomplete="off"
-                value="{{ .Length }}"
-                max="256"
-                min="1"
-            >
-            <button type="submit">Generate Password!</button>
-        </form>
-        <script type="text/javascript">
-document.addEventListener("DOMContentLoaded", () => {
-  let defaultAlphabets = {{ .Alphabets }};
-  let container = document.getElementById("alphabets");
-  let addBtn = document.getElementById("add-button");
-  let createAlpha = alpha => {
-    let ta = document.createElement("textarea");
-    ta.value = alpha;
-    ta.name = "alpha";
-
-    let button = document.createElement("button");
-    button.attributes.type = "button";
-    button.textContent = "-";
-    button.addEventListener("click", () => {
-      ta.remove();
-      button.remove();
-    });
-
-    container.insertBefore(ta, addBtn);
-    container.insertBefore(button, addBtn);
-  };
-
-  defaultAlphabets.forEach(createAlpha);
-
-  addBtn.addEventListener("click", () => createAlpha(""));
-
-  let pwEl = document.getElementById("password");
-
-  pwEl.addEventListener("click", event => {
-    let range = document.createRange();
-    range.selectNodeContents(pwEl);
-    let selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    if (document.execCommand("copy")) {
-      alert("copied");
-    }
-  });
-});
-        </script>
-    </body>
-</html>
-`
-
-var tmpl = template.Must(template.New("").Parse(html))
+var tmpl = template.Must(template.ParseGlob("templates/*"))
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	const (
@@ -119,7 +50,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Respond
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	err = tmpl.Execute(w, struct {
+	err = tmpl.ExecuteTemplate(w, "index.html", struct {
 		Length    int
 		Alphabets []string
 		Password  string

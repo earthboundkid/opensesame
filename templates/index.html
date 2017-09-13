@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>Open Sesame Web</title>
+        <script type="text/javascript">
+            window.defaultAlphabets = {{ .Alphabets }};
+        </script>
+        <script src="/static/js/app.js" async defer></script>
+    </head>
+    <body>
+        <p>Your password:</p>
+        <h1 id="password">{{ .Password }}</h1>
+        <p>Create a new password:</p>
+        <form action="" method="get">
+            <fieldset id="alphabets">
+            <button id="add-button" type="button">+</button>
+            </fieldset>
+
+            <label for="length">Length</label>
+            <input
+                type="number"
+                id="length"
+                name="length"
+                autcomplete="off"
+                value="{{ .Length }}"
+                max="256"
+                min="1"
+            >
+            <button type="submit">Generate Password!</button>
+        </form>
+
+    </body>
+</html>

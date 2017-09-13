@@ -30,6 +30,8 @@ func main() {
 		pageHandler(w, r)
 	})
 
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	srv := &http.Server{Addr: ":" + port, Handler: http.DefaultServeMux}
 
 	go func() {
