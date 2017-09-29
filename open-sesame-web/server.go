@@ -17,7 +17,7 @@ func main() {
 	}
 
 	// subscribe to SIGINT signals
-	stopChan := make(chan os.Signal)
+	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -36,9 +36,8 @@ func main() {
 
 	go func() {
 		// service connections
-		if err := srv.ListenAndServe(); err != nil {
-			log.Printf("listen: %s\n", err)
-		}
+		err := srv.ListenAndServe()
+		log.Printf("Finished listening: %v\n", err)
 	}()
 
 	<-stopChan // wait for SIGINT
