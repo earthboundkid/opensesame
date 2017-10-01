@@ -1,18 +1,51 @@
 <html>
     <head>
         <title>Open Sesame Web</title>
-        <script type="text/javascript">
-            window.defaultAlphabets = {{ .Alphabets }};
-        </script>
         <script src="/static/js/app.js" async defer></script>
     </head>
     <body>
         <p>Your password:</p>
         <h1 id="password">{{ .Password }}</h1>
+        <hr>
         <p>Create a new password:</p>
+
         <form action="" method="get">
+            <h2>Rules</h2>
             <fieldset id="alphabets">
-            <button id="add-button" type="button">+</button>
+                <input
+                    id="upper"
+                    type="checkbox"
+                    name="alpha"
+                    value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    {{ with .CheckedUpper }}checked{{ end }}>
+                <label for="upper">Uppercase</label>
+                <input
+                    id="lower"
+                    type="checkbox"
+                    name="alpha"
+                    value="abcdefghijklmnopqrstuvwxyz"
+                    {{ with .CheckedLower }}checked{{ end }}>
+                <label for="lower">Lowercase</label>
+                <input
+                    id="digits"
+                    type="checkbox"
+                    name="alpha"
+                    value="0123456789"
+                    {{ with .CheckedDigit }}checked{{ end }}>
+                <label for="digits">Digits</label>
+
+                {{ range $i, $a := .ExtraAlphabets }}
+                    <input
+                        type="checkbox"
+                        name="checkboxes"
+                        value="{{$i}}"
+                        checked>
+                    <input
+                        type="text"
+                        name="alpha-{{$i}}"
+                        value="{{$a}}">
+                {{ end }}
+                <button id="add-button" type="button">+</button>
             </fieldset>
 
             <label for="length">Length</label>

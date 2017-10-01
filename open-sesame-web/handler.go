@@ -31,9 +31,17 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	alphabets = alphabets[:c]
 
+	// Figure out which extra boxes were checked
+	for _, n := range r.Form["checkboxes"] {
+		if v := r.Form.Get("alpha-" + n); v != "" {
+			alphabets = append(alphabets, v)
+		}
+	}
+
 	if len(alphabets) == 0 {
 		alphabets = []string{upper, lower, digit}
 	}
+
 	lengthStr := r.Form.Get("length")
 	length, _ := strconv.Atoi(lengthStr)
 	if length < 1 || length > 256 {
@@ -48,16 +56,38 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Filter out known alphabets
+	var hasUpper, hasLower, hasDigit bool
+	c = 0
+	for _, s := range alphabets {
+		switch {
+		case !hasUpper && s == upper:
+			hasUpper = true
+		case !hasLower && s == lower:
+			hasLower = true
+		case !hasDigit && s == digit:
+			hasDigit = true
+		default:
+			alphabets[c] = s
+			c++
+		}
+	}
+	alphabets = alphabets[:c]
+
 	// Respond
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	err = tmpl.ExecuteTemplate(w, "index.html", struct {
-		Length    int
-		Alphabets []string
-		Password  string
+		Length                                   int
+		ExtraAlphabets                           []string
+		Password                                 string
+		CheckedUpper, CheckedLower, CheckedDigit bool
 	}{
-		Length:    length,
-		Alphabets: alphabets,
-		Password:  pass,
+		Length:         length,
+		ExtraAlphabets: alphabets,
+		Password:       pass,
+		CheckedUpper:   hasUpper,
+		CheckedLower:   hasLower,
+		CheckedDigit:   hasDigit,
 	})
 	if err != nil {
 		log.Printf("Template error: %v", err)

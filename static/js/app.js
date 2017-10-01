@@ -1,26 +1,21 @@
 window.addEventListener("load", () => {
   let container = document.getElementById("alphabets");
   let addBtn = document.getElementById("add-button");
-  let createAlpha = alpha => {
-    let ta = document.createElement("textarea");
-    ta.value = alpha;
-    ta.name = "alpha";
-
-    let button = document.createElement("button");
-    button.attributes.type = "button";
-    button.textContent = "-";
-    button.addEventListener("click", () => {
-      ta.remove();
-      button.remove();
-    });
-
-    container.insertBefore(ta, addBtn);
-    container.insertBefore(button, addBtn);
-  };
-
-  window.defaultAlphabets.forEach(createAlpha);
-
-  addBtn.addEventListener("click", () => createAlpha(""));
+  let cnt = document.querySelectorAll("[name=checkboxes]").length || 0;
+  addBtn.addEventListener("click", () => {
+    let chbx = document.createElement("input");
+    chbx.type = "checkbox";
+    chbx.checked = true;
+    chbx.name = "checkboxes";
+    chbx.value = cnt;
+    let input = document.createElement("input");
+    input.type = "text";
+    input.name = `alpha-${cnt}`;
+    input.placeholder = "!@#$%^&*";
+    container.insertBefore(chbx, addBtn);
+    container.insertBefore(input, addBtn);
+    cnt++;
+  });
 
   let pwEl = document.getElementById("password");
 
