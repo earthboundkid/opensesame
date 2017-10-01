@@ -20,8 +20,17 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Validate request
 	_ = r.ParseForm()
-	alphabets := r.Form["alpha"]
-	// Filter empty strings
+
+	// Figure out which extra boxes were checked
+	// and add corresponding input values to alphabets
+	alphabets := make([]string, 0, len(r.Form["checkboxes"]))
+	for _, cbVal := range r.Form["checkboxes"] {
+		if inpVal := r.Form.Get(cbVal); inpVal != "" {
+			alphabets = append(alphabets, inpVal)
+		}
+	}
+
+	// Filter empty alphabet strings
 	c := 0
 	for _, s := range alphabets {
 		if s != "" {
@@ -30,13 +39,6 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	alphabets = alphabets[:c]
-
-	// Figure out which extra boxes were checked
-	for _, n := range r.Form["checkboxes"] {
-		if v := r.Form.Get("alpha-" + n); v != "" {
-			alphabets = append(alphabets, v)
-		}
-	}
 
 	if len(alphabets) == 0 {
 		alphabets = []string{upper, lower, digit}

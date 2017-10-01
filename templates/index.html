@@ -15,30 +15,51 @@
                 <input
                     id="upper"
                     type="checkbox"
-                    name="alpha"
-                    value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    name="checkboxes"
+                    value="alpha-upper"
                     {{ with .CheckedUpper }}checked{{ end }}>
-                <label for="upper">Uppercase</label>
+                <label for="upper">
+                    Uppercase
+                    <input
+                        type="text"
+                        name="alpha-upper"
+                        value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                        readonly>
+                </label>
                 <input
                     id="lower"
                     type="checkbox"
-                    name="alpha"
-                    value="abcdefghijklmnopqrstuvwxyz"
+                    name="checkboxes"
+                    value="alpha-lower"
                     {{ with .CheckedLower }}checked{{ end }}>
-                <label for="lower">Lowercase</label>
+                <label for="lower">
+                    Lowercase
+                    <input
+                        type="text"
+                        name="alpha-lower"
+                        value="abcdefghijklmnopqrstuvwxyz"
+                        readonly>
+                </label>
                 <input
                     id="digits"
                     type="checkbox"
-                    name="alpha"
-                    value="0123456789"
+                    name="checkboxes"
+                    value="alpha-digit"
                     {{ with .CheckedDigit }}checked{{ end }}>
-                <label for="digits">Digits</label>
+                <label for="digits">
+                    Digits
+                    <input
+                        type="text"
+                        name="alpha-digit"
+                        value="0123456789"
+                        readonly>
+                </label>
 
                 {{ range $i, $a := .ExtraAlphabets }}
                     <input
                         type="checkbox"
                         name="checkboxes"
-                        value="{{$i}}"
+                        value="alpha-{{$i}}"
                         checked>
                     <input
                         type="text"
