@@ -1,17 +1,19 @@
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Open Sesame Web</title>
         <script src="/static/js/app.js" async defer></script>
         <link rel="stylesheet" type="text/css" href="/static/css/app.css">
     </head>
     <body>
         <p>Your password:</p>
-        <h1 id="password">{{ .Password }}</h1>
+        <h1 id="password" class="password">{{ .Password }}</h1>
         <hr>
         <h2>Create a new password:</h2>
 
         <form action="" method="get">
-            <label for="length">Length</label>
+            <label for="length">Length:</label>
             <input
                 type="number"
                 id="length"
@@ -24,55 +26,58 @@
 
             <h3>Required Characters</h3>
             <fieldset id="alphabets">
-                <input
-                    id="upper"
-                    type="checkbox"
-                    name="checkboxes"
-                    value="alpha-upper"
-                    {{ with .CheckedUpper }}checked{{ end }}>
-                <label for="upper">
-                    Uppercase
+                <label>
                     <input
-                        type="text"
-                        name="alpha-upper"
-                        value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                        readonly>
-                </label>
-                <input
-                    id="lower"
-                    type="checkbox"
-                    name="checkboxes"
-                    value="alpha-lower"
-                    {{ with .CheckedLower }}checked{{ end }}>
-                <label for="lower">
-                    Lowercase
-                    <input
-                        type="text"
-                        name="alpha-lower"
-                        value="abcdefghijklmnopqrstuvwxyz"
-                        readonly>
-                </label>
-                <input
-                    id="digits"
-                    type="checkbox"
-                    name="checkboxes"
-                    value="alpha-digit"
-                    {{ with .CheckedDigit }}checked{{ end }}>
-                <label for="digits">
-                    Digits
-                    <input
-                        type="text"
-                        name="alpha-digit"
-                        value="0123456789"
-                        readonly>
-                </label>
-
-                {{ range $i, $a := .ExtraAlphabets }}
-                    <input
+                        id="upper"
                         type="checkbox"
                         name="checkboxes"
-                        value="alpha-{{$i}}"
-                        checked>
+                        value="alpha-upper"
+                        {{ with .CheckedUpper }}checked{{ end }}>
+                        Uppercase
+                </label>
+                <input
+                    type="text"
+                    name="alpha-upper"
+                    value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    readonly>
+                <label>
+                    <input
+                        id="lower"
+                        type="checkbox"
+                        name="checkboxes"
+                        value="alpha-lower"
+                        {{ with .CheckedLower }}checked{{ end }}>
+                    Lowercase
+                </label>
+                <input
+                    type="text"
+                    name="alpha-lower"
+                    value="abcdefghijklmnopqrstuvwxyz"
+                    readonly>
+                <label>
+                    <input
+                        id="digits"
+                        type="checkbox"
+                        name="checkboxes"
+                        value="alpha-digit"
+                        {{ with .CheckedDigit }}checked{{ end }}>
+                    Digits
+                </label>
+                <input
+                    type="text"
+                    name="alpha-digit"
+                    value="0123456789"
+                    readonly>
+
+                {{ range $i, $a := .ExtraAlphabets }}
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="checkboxes"
+                            value="alpha-{{$i}}"
+                            checked>
+                        Custom
+                    </label>
                     <input
                         type="text"
                         name="alpha-{{$i}}"

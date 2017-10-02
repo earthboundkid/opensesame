@@ -1,19 +1,24 @@
 window.addEventListener("load", () => {
-  let container = document.getElementById("alphabets");
   let addBtn = document.getElementById("add-button");
   let cnt = document.querySelectorAll("[name=checkboxes]").length || 0;
   addBtn.addEventListener("click", () => {
-    let chbx = document.createElement("input");
-    chbx.type = "checkbox";
-    chbx.checked = true;
-    chbx.name = "checkboxes";
-    chbx.value = `alpha-${cnt}`;
-    let input = document.createElement("input");
-    input.type = "text";
-    input.name = `alpha-${cnt}`;
-    input.placeholder = "!@#$%^&*";
-    container.insertBefore(chbx, addBtn);
-    container.insertBefore(input, addBtn);
+    addBtn.insertAdjacentHTML(
+      "beforebegin",
+      `
+      <label>
+        <input
+          type="checkbox"
+          name="checkboxes"
+          value="alpha-${cnt}"
+          checked>
+        Custom
+      </label>
+      <input
+        type="text"
+        name="alpha-${cnt}"
+        placeholder="!@#$%^&*">
+    `
+    );
     cnt++;
   });
 
