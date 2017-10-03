@@ -31,7 +31,7 @@ window.addEventListener("load", () => {
     selection.removeAllRanges();
     selection.addRange(range);
     if (document.execCommand("copy")) {
-      alert("copied");
+      alert("Copied");
     }
   });
 });
