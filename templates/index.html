@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>Open Sesame Web</title>
         <script src="/static/js/app.js" async defer></script>
         <link rel="stylesheet" type="text/css" href="/static/css/app.css">
@@ -26,65 +26,29 @@
 
             <h3>Required Characters</h3>
             <fieldset id="alphabets">
-                <label>
-                    <input
-                        id="upper"
-                        type="checkbox"
-                        name="checkboxes"
-                        value="alpha-upper"
-                        {{ with .CheckedUpper }}checked{{ end }}>
-                        Uppercase
-                </label>
-                <input
-                    type="text"
-                    name="alpha-upper"
-                    value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    readonly>
-                <label>
-                    <input
-                        id="lower"
-                        type="checkbox"
-                        name="checkboxes"
-                        value="alpha-lower"
-                        {{ with .CheckedLower }}checked{{ end }}>
-                    Lowercase
-                </label>
-                <input
-                    type="text"
-                    name="alpha-lower"
-                    value="abcdefghijklmnopqrstuvwxyz"
-                    readonly>
-                <label>
-                    <input
-                        id="digits"
-                        type="checkbox"
-                        name="checkboxes"
-                        value="alpha-digit"
-                        {{ with .CheckedDigit }}checked{{ end }}>
-                    Digits
-                </label>
-                <input
-                    type="text"
-                    name="alpha-digit"
-                    value="0123456789"
-                    readonly>
-
-                {{ range $i, $a := .ExtraAlphabets }}
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="checkboxes"
-                            value="alpha-{{$i}}"
-                            checked>
-                        Custom
+                <ul id="req-list">
+                {{ range $i, $a := .Alphabets }}
+                <li>
+                    <label for="alpha-{{$i}}">
+                        {{ $a.Label }}
                     </label>
+                    <input
+                        id="alpha-{{$i}}"
+                        type="checkbox"
+                        name="checkboxes"
+                        value="alpha-{{$i}}"
+                        checked>
                     <input
                         type="text"
                         name="alpha-{{$i}}"
-                        value="{{$a}}">
+                        value="{{ $a.Value }}">
+                </li>
                 {{ end }}
-                <button id="add-button" type="button">+</button>
-                <label for="add-button">Add requirement</label>
+                </ul>
+                <div class="add-button">
+                    <button id="add-button" type="button">+</button>
+                    <label for="add-button">Add requirement</label>
+                </div>
             </fieldset>
             <button type="submit">Generate Password!</button>
         </form>

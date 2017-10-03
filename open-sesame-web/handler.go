@@ -11,12 +11,19 @@ import (
 
 var tmpl = template.Must(template.ParseGlob("templates/*"))
 
+const (
+	upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	lower = "abcdefghijklmnopqrstuvwxyz"
+	digit = "0123456789"
+)
+
+var labels = map[string]string{
+	upper: "Uppercase",
+	lower: "Lowercase",
+	digit: "Digits",
+}
+
 func pageHandler(w http.ResponseWriter, r *http.Request) {
-	const (
-		upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		lower = "abcdefghijklmnopqrstuvwxyz"
-		digit = "0123456789"
-	)
 
 	// Validate request
 	_ = r.ParseForm()
@@ -58,38 +65,29 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Filter out known alphabets
-	var hasUpper, hasLower, hasDigit bool
-	c = 0
-	for _, s := range alphabets {
-		switch {
-		case !hasUpper && s == upper:
-			hasUpper = true
-		case !hasLower && s == lower:
-			hasLower = true
-		case !hasDigit && s == digit:
-			hasDigit = true
-		default:
-			alphabets[c] = s
-			c++
-		}
+	type templateAlpha struct {
+		Label, Value string
 	}
-	alphabets = alphabets[:c]
+
+	templateAlphas := make([]templateAlpha, 0, len(alphabets))
+	for _, alpha := range alphabets {
+		label := labels[alpha]
+		if label == "" {
+			label = "Requirement"
+		}
+		templateAlphas = append(templateAlphas, templateAlpha{label, alpha})
+	}
 
 	// Respond
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	err = tmpl.ExecuteTemplate(w, "index.html", struct {
-		Length                                   int
-		ExtraAlphabets                           []string
-		Password                                 string
-		CheckedUpper, CheckedLower, CheckedDigit bool
+		Length    int
+		Password  string
+		Alphabets []templateAlpha
 	}{
-		Length:         length,
-		ExtraAlphabets: alphabets,
-		Password:       pass,
-		CheckedUpper:   hasUpper,
-		CheckedLower:   hasLower,
-		CheckedDigit:   hasDigit,
+		Length:    length,
+		Password:  pass,
+		Alphabets: templateAlphas,
 	})
 	if err != nil {
 		log.Printf("Template error: %v", err)

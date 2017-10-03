@@ -1,22 +1,26 @@
 window.addEventListener("load", () => {
   let addBtn = document.getElementById("add-button");
+  let container = document.getElementById("req-list");
   let cnt = document.querySelectorAll("[name=checkboxes]").length || 0;
   addBtn.addEventListener("click", () => {
-    addBtn.insertAdjacentHTML(
-      "beforebegin",
+    container.insertAdjacentHTML(
+      "beforeend",
       `
-      <label>
-        <input
-          type="checkbox"
-          name="checkboxes"
-          value="alpha-${cnt}"
-          checked>
-        Custom
-      </label>
-      <input
-        type="text"
-        name="alpha-${cnt}"
-        placeholder="!@#$%^&*">
+      <li>
+          <label for="alpha-${cnt}">
+              Requirement
+          </label>
+          <input
+              id="alpha-${cnt}"
+              type="checkbox"
+              name="checkboxes"
+              value="alpha-${cnt}"
+              checked>
+          <input
+              type="text"
+              name="alpha-${cnt}"
+              placeholder="!@#$%^&*">
+      </li>
     `
     );
     cnt++;
