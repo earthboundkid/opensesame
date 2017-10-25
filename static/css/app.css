@@ -105,6 +105,7 @@ ul {
 
 .password {
   text-align: center;
+    overflow-wrap: break-word;
 }
 
 .password:hover {
