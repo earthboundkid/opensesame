@@ -17,8 +17,28 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-  background-color: #aaa;
-  color: #eee;
+  animation: barberpole 10s infinite linear;
+  background: linear-gradient(
+    -45deg,
+    #eee 25%,
+    #aaa 25%,
+    #aaa 50%,
+    #eee 50%,
+    #eee 75%,
+    #aaa 75%
+  );
+  background-size: 27px 27px;
+  color: #333;
+  text-shadow: #aaa 0 1px 4px;
+}
+
+@-webkit-keyframes barberpole {
+  from {
+    background-position: 0%;
+  }
+  to {
+    background-position: 100%;
+  }
 }
 
 fieldset {
@@ -85,6 +105,10 @@ ul {
 
 .password {
   text-align: center;
+}
+
+.password:hover {
+    color: #aaa;
 }
 
 .add-button {
