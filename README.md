@@ -13,22 +13,24 @@ GOBIN=$(pwd) GOPATH=$(mktemp -d) go get github.com/carlmjohnson/opensesame
 ## Screenshots
 ```shell
 $ opensesame
-OCo6X1Py
+9%cjTE^O@iYx
 
 $ opensesame -h
 Usage of opensesame [opts] [alphabet]:
 
-        Creates a password by randomly selecting characters from its alphabet.
+	Creates a password by randomly selecting characters from its alphabet.
 
-        Alphabet is a space separated list of character classes to use.
-        At least one character in each class will be output.
-        Character classes are either literal sets (like "abc" and "123") or the
-        special names "upper", "lower", "digit", and "default".
+	Alphabet is a space separated list of character classes to use.
+	At least one character in each class will be output.
+	Character classes are either literal sets (like "abc" and "123") or the
+	names "upper", "lower", "digit", "special" and "default". The "special"
+ 	alphabet contains characters like "$" and "&" often required by online
+ 	password guidelines.
 
-        Default alphabet is "upper lower digit".
+	Default alphabet is "upper lower digit special".
 
-  -length int
-        length of password to generate (default 8)
+	-length int
+		length of password to generate (default 12)
 
 $ opensesame --length 4 '123 ABC xyz &%$'
 &Cx3
